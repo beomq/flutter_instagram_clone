@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+import 'home_model.dart';
+
+class HomePage extends StatefulWidget {
+  HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final model = HomeModel();
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +43,31 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: 80,
                       height: 80,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://cdn.pixabay.com/photo/2023/06/03/17/11/giraffe-8038107_1280.jpg'),
+                      child: GestureDetector(
+                        onTap: () async {
+                          await model.updateProfileImage();
+
+                          setState(() {});
+                        },
+                        child: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(model.getProfileImageUrl()),
+                        ),
                       ),
                     ),
                     const SizedBox(
                       height: 8,
                     ),
-                    const Text(
-                      'giraffe@giraffe.com',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      model.getEmail(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    const Text('기린'),
+                    Text(
+                      model.getNickname(),
+                    ),
                     const SizedBox(
                       height: 8,
                     ),

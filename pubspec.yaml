@@ -37,11 +37,12 @@ dependencies:
   cupertino_icons: ^1.0.4
   image_picker: ^0.8.4+4
   firebase_auth: ^4.6.3
-  google_sign_in: ^6.1.4
+  google_sign_in: ^5.2.1
   flutter_signin_button: ^2.0.0
   cloud_firestore: ^4.8.1
   firebase_storage: ^11.2.3
   firebase_core: ^2.14.0
+  flutterfire_ui: ^0.4.3+20
 
 
 

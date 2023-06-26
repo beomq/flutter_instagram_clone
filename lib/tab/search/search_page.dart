@@ -1,17 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/create/create_page.dart';
+import 'package:instagram_clone/detail_post/detail_post_page.dart';
+import 'package:instagram_clone/domain/post.dart';
+import 'package:instagram_clone/tab/search/search_model.dart';
 
 class SearchPage extends StatelessWidget {
-  final List<String> _urls = const [
-    'https://cdn.pixabay.com/photo/2018/04/23/14/23/giraffe-3344366_1280.jpg',
-    'https://cdn.pixabay.com/photo/2013/07/19/00/18/giraffe-165200_1280.jpg',
-    'https://cdn.pixabay.com/photo/2019/09/17/20/47/prague-4484517_1280.jpg',
-    'https://cdn.pixabay.com/photo/2019/09/17/20/47/prague-4484517_1280.jpg',
-  ];
   const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final model = SearchModel();
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -25,21 +25,48 @@ class SearchPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('instagram clone'),
       ),
-      body: GridView.builder(
-        itemCount: _urls.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 2.0,
-          crossAxisSpacing: 2.0,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          final url = _urls[index];
-          return Image.network(
-            url,
-            fit: BoxFit.cover,
-          );
-        },
-      ),
+      body: StreamBuilder<QuerySnapshot<Post>>(
+          stream: model.postsStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('알 수 없는 에러');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            List<Post> posts =
+                snapshot.data!.docs.map((post) => post.data()).toList();
+
+            return GridView.builder(
+              itemCount: posts.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 2.0,
+                crossAxisSpacing: 2.0,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                final post = posts[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailPostPage(post: post),
+                      ),
+                    );
+                  },
+                  child: Hero(
+                    tag: post.id,
+                    child: Image.network(
+                      post.imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
     );
   }
 }
