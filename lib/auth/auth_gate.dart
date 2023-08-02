@@ -29,6 +29,7 @@ class AuthGate extends StatelessWidget {
               GoogleProviderConfiguration(
                 clientId: '$clientId',
               ),
+              AppleProviderConfiguration(),
             ],
             headerBuilder: (context, constraints, _) {
               return const Center(
